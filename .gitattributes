@@ -1,2 +1,23 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# ✅ Prioritize Dart for GitHub language stats
+*.dart linguist-detectable=true
+lib/** linguist-language=Dart
+
+# 🚫 Exclude platform-specific and generated files
+android/** linguist-vendored
+ios/** linguist-vendored
+macos/** linguist-vendored
+web/** linguist-vendored
+windows/** linguist-vendored
+linux/** linguist-vendored
+build/** linguist-vendored
+.dart_tool/** linguist-vendored
+.flutter-plugins-dependencies linguist-generated
+
+# 🧼 Hide misleading non-Dart files from stats
+Makefile linguist-detectable=false
+*.sh linguist-vendored
+*.gradle linguist-vendored
+*.bat linguist-vendored
+*.yaml linguist-vendored
+*.yml linguist-vendored
+*.xml linguist-vendored
