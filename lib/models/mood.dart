@@ -8,6 +8,7 @@ class Mood {
   final Color textColor;
   final String quote;
   final DateTime timestamp;
+  final String? note;
 
   Mood({
     required this.emoji,
@@ -16,6 +17,7 @@ class Mood {
     required this.backgroundColor,
     required this.textColor,
     required this.quote,
+    this.note,
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
 
@@ -26,6 +28,7 @@ class Mood {
         'backgroundColor': backgroundColor.value,
         'textColor': textColor.value,
         'quote': quote,
+        'note': note,
         'timestamp': timestamp.toIso8601String(),
       };
 
@@ -36,6 +39,7 @@ class Mood {
         backgroundColor: Color(json['backgroundColor']),
         textColor: Color(json['textColor']),
         quote: json['quote'],
+        note: json['note'],
         timestamp: DateTime.parse(json['timestamp']),
       );
 } 

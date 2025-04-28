@@ -1,90 +1,48 @@
 # AuraMood Flutter
 
-A beautiful mood tracking app built with Flutter that helps you track your emotions and provides motivational quotes.
+A beautiful, modern mood tracking app with 3D animated mood cards, onboarding, reminders, and more.
 
 ## Features
-
-- 🎨 Light/Dark theme support
-- 😊 Emoji mood selection with smooth animations
-- 💫 Animated aura background
-- 📜 Motivational quotes based on selected mood
-- 📱 Clean, modern UI
-- 📊 Recent mood history tracking
-- 📱 Haptic feedback for better user experience
+- 3D animated mood card carousel (EmojiSlider)
+- Glassmorphism and gradients
+- Animated emojis (Lottie, fallback to static emoji)
+- Confetti and sound feedback on mood selection
+- Daily mood check-in reminders (local notifications)
+- Onboarding for first-time users
+- Mood history and recent moods
+- Light/dark mode with theme toggle
+- Accessibility and performance optimizations
+- Settings screen for reminders and preferences
 
 ## Getting Started
+1. **Clone the repository:**
+   ```sh
+   git clone <your-repo-url>
+   cd AuraMood_Flutter
+   ```
+2. **Install dependencies:**
+   ```sh
+   flutter pub get
+   ```
+3. **Run the app:**
+   ```sh
+   flutter run
+   ```
 
-### Prerequisites
+## Screens
+- **OnboardingScreen:** App intro and feature highlights
+- **HomeScreen:** Mood selection, recent moods, and quick actions
+- **EmojiSlider:** 3D mood card carousel with animations
+- **SettingsScreen:** Daily reminder toggle and time picker
 
-- Flutter SDK (latest stable version)
-- Dart SDK (latest stable version)
-- Android Studio / VS Code with Flutter extensions
+## ⚠️ License
 
-### Installation
+**Personal Project - Private Use Only**
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/aura_mood_flutter.git
-```
+- This project is the personal property of the creator.
+- Any unauthorized use, distribution, reproduction, modification, or publishing is prohibited.
+- Commercial, educational, or open-source usage without explicit written consent is strictly forbidden.
 
-2. Navigate to the project directory:
-```bash
-cd aura_mood_flutter
-```
+---
 
-3. Install dependencies:
-```bash
-flutter pub get
-```
-
-4. Run the app:
-```bash
-flutter run
-```
-
-## Project Structure
-
-```
-aura_mood_flutter/
-├── assets/
-│   └── lottie/
-│       └── aura_background.json
-├── lib/
-│   ├── components/
-│   │   ├── aura_background.dart
-│   │   ├── emoji_slider.dart
-│   │   ├── mood_card.dart
-│   │   ├── mood_history_list.dart
-│   │   └── theme_toggle.dart
-│   ├── models/
-│   │   └── mood.dart
-│   ├── providers/
-│   │   ├── mood_provider.dart
-│   │   └── theme_provider.dart
-│   ├── screens/
-│   │   └── home_screen.dart
-│   ├── utils/
-│   │   └── mood_data.dart
-│   └── main.dart
-```
-
-## Dependencies
-
-- `provider`: State management
-- `lottie`: Beautiful animations
-- `flutter_hooks`: Clean stateful widgets
-- `haptic_feedback`: Haptic feedback
-- `shared_preferences`: Local storage
-- `intl`: Date formatting
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+For questions or requests, please contact the project creator directly.
