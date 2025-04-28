@@ -13,7 +13,13 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AuraMood'),
+        title: const Text(
+          'AuraMood',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
         actions: const [ThemeToggle()],
       ),
       body: Stack(
@@ -28,7 +34,7 @@ class HomeScreen extends StatelessWidget {
                   const Text(
                     'How are you feeling today?',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
@@ -39,24 +45,35 @@ class HomeScreen extends StatelessWidget {
                   Consumer<MoodProvider>(
                     builder: (context, moodProvider, child) {
                       if (moodProvider.currentMood != null) {
-                        return Column(
-                          children: [
-                            Text(
-                              moodProvider.currentMood!.quote,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              textAlign: TextAlign.center,
+                        return Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: moodProvider.currentMood!.color.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: moodProvider.currentMood!.color.withOpacity(0.3),
+                              width: 1,
                             ),
-                            const SizedBox(height: 32),
-                          ],
+                          ),
+                          child: Text(
+                            moodProvider.currentMood!.quote,
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  fontSize: 18,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.8),
+                                  fontStyle: FontStyle.italic,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
                         );
                       }
                       return const SizedBox.shrink();
                     },
                   ),
+                  const SizedBox(height: 32),
                   const Text(
                     'Recent Moods',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

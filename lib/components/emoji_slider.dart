@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:aura_mood_flutter/models/mood.dart';
 import 'package:aura_mood_flutter/providers/mood_provider.dart';
 import 'package:aura_mood_flutter/utils/mood_data.dart';
+import 'package:aura_mood_flutter/providers/theme_provider.dart';
 
 class EmojiSlider extends StatefulWidget {
   const EmojiSlider({super.key});
@@ -12,13 +13,47 @@ class EmojiSlider extends StatefulWidget {
   State<EmojiSlider> createState() => _EmojiSliderState();
 }
 
-class _EmojiSliderState extends State<EmojiSlider> {
+class _EmojiSliderState extends State<EmojiSlider> with TickerProviderStateMixin {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
+  late AnimationController _glowController;
+  late Animation<double> _glowAnimation;
+  late AnimationController _bounceController;
+  late Animation<double> _bounceAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _glowController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+    
+    _glowAnimation = Tween<double>(begin: 0.3, end: 0.6).animate(
+      CurvedAnimation(
+        parent: _glowController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    _bounceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _bounceAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(
+        parent: _bounceController,
+        curve: Curves.elasticOut,
+      ),
+    );
+  }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _glowController.dispose();
+    _bounceController.dispose();
     super.dispose();
   }
 
@@ -26,6 +61,7 @@ class _EmojiSliderState extends State<EmojiSlider> {
     setState(() {
       _selectedIndex = index;
     });
+    _bounceController.forward(from: 0);
     HapticFeedback.lightImpact();
   }
 
@@ -38,10 +74,14 @@ class _EmojiSliderState extends State<EmojiSlider> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         SizedBox(
-          height: 200,
+          height: 240,
           child: PageView.builder(
             controller: _pageController,
             onPageChanged: _onPageChanged,
@@ -54,7 +94,9 @@ class _EmojiSliderState extends State<EmojiSlider> {
                 duration: const Duration(milliseconds: 300),
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: mood.color.withOpacity(0.2),
+                  color: isDarkMode 
+                      ? mood.backgroundColor.withOpacity(0.2)
+                      : mood.backgroundColor,
                   borderRadius: BorderRadius.circular(20),
                   border: isSelected
                       ? Border.all(
@@ -62,23 +104,61 @@ class _EmojiSliderState extends State<EmojiSlider> {
                           width: 2,
                         )
                       : null,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      mood.emoji,
-                      style: TextStyle(
-                        fontSize: isSelected ? 72 : 64,
-                      ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: mood.color.withOpacity(isDarkMode ? 0.1 : 0.2),
+                      blurRadius: 10,
+                      spreadRadius: 2,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      mood.name,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: mood.color,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          ),
+                  ],
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    if (isSelected)
+                      AnimatedBuilder(
+                        animation: _glowAnimation,
+                        builder: (context, child) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: mood.color.withOpacity(_glowAnimation.value),
+                            ),
+                            width: 120,
+                            height: 120,
+                          );
+                        },
+                      ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        AnimatedBuilder(
+                          animation: _bounceAnimation,
+                          builder: (context, child) {
+                            return Transform.scale(
+                              scale: isSelected ? _bounceAnimation.value : 1.0,
+                              child: Text(
+                                mood.emoji,
+                                style: TextStyle(
+                                  fontSize: isSelected ? 72 : 64,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          mood.name,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                                color: isDarkMode ? Colors.white : mood.textColor,
+                                fontSize: 28,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                letterSpacing: 0.5,
+                              ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                     ),
                   ],
                 ),
@@ -99,24 +179,41 @@ class _EmojiSliderState extends State<EmojiSlider> {
                 shape: BoxShape.circle,
                 color: index == _selectedIndex
                     ? MoodData.moods[index].color
-                    : Colors.grey.shade300,
+                    : isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
               ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: _onEmojiSelected,
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            backgroundColor: MoodData.moods[_selectedIndex].color,
+        const SizedBox(height: 24),
+        Container(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: MoodData.moods[_selectedIndex].color.withOpacity(isDarkMode ? 0.2 : 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          child: const Text(
-            'Select Mood',
-            style: TextStyle(color: Colors.white),
+          child: ElevatedButton(
+            onPressed: _onEmojiSelected,
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              backgroundColor: MoodData.moods[_selectedIndex].color,
+              foregroundColor: isDarkMode ? Colors.white : MoodData.moods[_selectedIndex].textColor,
+              elevation: 5,
+            ),
+            child: const Text(
+              'Select Mood',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
           ),
         ),
       ],
