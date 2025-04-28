@@ -23,31 +23,33 @@ class AuraMoodApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    
-    return MaterialApp(
-      title: 'AuraMood',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.light(
-          primary: Colors.purple.shade300,
-          secondary: Colors.pink.shade200,
-          surface: Colors.white,
-          background: Colors.grey.shade50,
-        ),
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.dark(
-          primary: Colors.purple.shade200,
-          secondary: Colors.pink.shade100,
-          surface: Colors.grey.shade900,
-          background: Colors.grey.shade800,
-        ),
-        useMaterial3: true,
-      ),
-      themeMode: themeProvider.themeMode,
-      home: const HomeScreen(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: 'AuraMood',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.light(
+              primary: Colors.purple.shade300,
+              secondary: Colors.pink.shade200,
+              surface: Colors.white,
+              background: Colors.grey.shade50,
+            ),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: ColorScheme.dark(
+              primary: Colors.purple.shade200,
+              secondary: Colors.pink.shade100,
+              surface: Colors.grey.shade900,
+              background: Colors.grey.shade800,
+            ),
+            useMaterial3: true,
+          ),
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: const HomeScreen(),
+        );
+      },
     );
   }
 } 
