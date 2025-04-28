@@ -3,23 +3,30 @@ import 'package:provider/provider.dart';
 import 'package:aura_mood_flutter/providers/theme_provider.dart';
 import 'package:aura_mood_flutter/providers/mood_provider.dart';
 import 'package:aura_mood_flutter/screens/home_screen.dart';
+import 'package:aura_mood_flutter/screens/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:aura_mood_flutter/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+  await NotificationService.initialize();
+  final prefs = await SharedPreferences.getInstance();
+  final onboardingComplete = prefs.getBool('onboarding_complete') ?? false;
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => MoodProvider()),
       ],
-      child: const AuraMoodApp(),
+      child: AuraMoodApp(onboardingComplete: onboardingComplete),
     ),
   );
 }
 
 class AuraMoodApp extends StatelessWidget {
-  const AuraMoodApp({super.key});
+  final bool onboardingComplete;
+  const AuraMoodApp({super.key, required this.onboardingComplete});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +54,11 @@ class AuraMoodApp extends StatelessWidget {
             useMaterial3: true,
           ),
           themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: const HomeScreen(),
+          initialRoute: onboardingComplete ? '/home' : '/onboarding',
+          routes: {
+            '/home': (context) => const HomeScreen(),
+            '/onboarding': (context) => const OnboardingScreen(),
+          },
         );
       },
     );
